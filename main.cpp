@@ -4,7 +4,7 @@
 
 using namespace std;
 
-vector<vector<string>> graf;
+vector<pair<int, int>> graf;
 
 int main(int argc, char* argv[]) {
 
@@ -23,7 +23,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    int x, y; // tymczasowe zmienne
+    while (plik >> x >> y) { // strumien wpisuje kolejne indeksy pol do x i y
+        graf.push_back({x, y}); // x i y dodane na stale do par
+    }
 
+    // wyswietlenie par z grafu
+    for (pair<int, int> p : graf) {
+        cout << p.first << " " << p.second << endl;
+    }
 
     return 0;
 }
