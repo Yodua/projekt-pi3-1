@@ -1,0 +1,27 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "GNU",
+	"compiler-simulate-id" : "",
+	"config" : "Debug",
+	"cxx-modules" : {},
+	"database-info" : null,
+	"dir-cur-bld" : "/home/yodua/dev/projekt-pi3-1/cmake-build-debug",
+	"dir-cur-src" : "/home/yodua/dev/projekt-pi3-1",
+	"dir-top-bld" : "/home/yodua/dev/projekt-pi3-1/cmake-build-debug",
+	"dir-top-src" : "/home/yodua/dev/projekt-pi3-1",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : [],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "/home/yodua/dev/projekt-pi3-1/cmake-build-debug/CMakeFiles/projekt_pi3_1.dir",
+	"sources" : 
+	{
+		"CMakeFiles/projekt_pi3_1.dir/main.cpp.o" : 
+		{
+			"language" : "CXX",
+			"source" : "/home/yodua/dev/projekt-pi3-1/main.cpp"
+		}
+	}
+}
