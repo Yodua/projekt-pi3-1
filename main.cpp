@@ -20,7 +20,7 @@ bool foundTargetDFS = false;
 int target = 17;
 
 bool checkIfInVector(const vector<int>& vec, int const value) {
-    for (int n : vec) {
+    for (int const n : vec) {
         if (n == value) return true;
     }
     return false;
@@ -111,7 +111,7 @@ void multiAgentBFS(int const agentCount) {
     // tworzenie agentow
     vector<Agent> agents;
     for (int i = 0; i < agentCount; i++) {
-        agents.push_back(Agent(i));
+        agents.emplace_back(i);
     }
 
     // algorytm
@@ -150,7 +150,7 @@ void multiAgentBFS(int const agentCount) {
 void multiAgentDFS(int const agentCount) {
     vector<Agent> agents;
     for (int i = 0; i < agentCount; i++) {
-        agents.push_back(Agent(i));
+        agents.emplace_back(i);
     }
 
     while (true) {
@@ -204,7 +204,7 @@ int main(int argc, char* argv[]) {
 
     int sourceNode, targetNode;
     while (plik >> sourceNode >> targetNode) { // strumien wpisuje kolejne indeksy pol do x i y
-        graf.push_back({sourceNode, targetNode}); // x i y dodane na stale do par
+        graf.emplace_back(sourceNode, targetNode); // x i y dodane na stale do par
     }
 
     // wyswietlenie par z grafu
@@ -231,7 +231,7 @@ int main(int argc, char* argv[]) {
     start = clock();
     multiAgentDFS(3);
     end = clock();
-    double executionTimeDFS = double(end - start) / CLOCKS_PER_SEC;
+    double const executionTimeDFS = double(end - start) / CLOCKS_PER_SEC;
 
     cout << endl << endl;
 
