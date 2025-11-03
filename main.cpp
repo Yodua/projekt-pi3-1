@@ -8,45 +8,49 @@
 
 using namespace std;
 
-vector<pair<int, int>> graf;
-set<int> uniqueChecker;
+vector<pair<int, int>> graf; // graf w postaci jednostronnych przejsc miedzy polami
+set<int> uniqueChecker; // pomocnicza do vectora nodes, trzeba uzyc razem z wektorem, bo set nie jest indeksowany
 set<int> visited;
-vector<int> nodes;
+vector<int> nodes; // wymaga uniqueChecker bo latwiej sprawdzic unikalnosc danych
 
 bool foundTargetBFS = false;
 bool foundTargetDFS = false;
 
+// TODO: target jako input uzytkownika zamiast stalej
 int target = 17;
 
-bool checkIfInVector(vector<int> vec, int value) {
+bool checkIfInVector(const vector<int>& vec, int const value) {
     for (int n : vec) {
         if (n == value) return true;
     }
     return false;
 }
 
+// Agent uniwersalny dla DFS i BFS
 class Agent {
 public:
     int id;
-    int position;
-    queue<int> q;
+    int startingPosition;
+    queue<int> q; // kolejka do BFS
     vector<int> neighbours;
-    stack<int> s;
+    stack<int> s; // stos do DFS
 
-    Agent(int i) {
+    explicit Agent(int const i) {
         this->id = i;
-        this->position = nodes[rand() % nodes.size()];
-        q.push(position);
-        s.push(position);
+        this->startingPosition = nodes[rand() % nodes.size()]; //zaczyna z losowego miejsca na grafie
+        q.push(startingPosition);
+        s.push(startingPosition);
     }
 
+    // pojedynczy krok algorytmu BFS dla jednego agenta
     void BFSstep() {
-        if (q.empty()) {
+        if (q.empty()) { //jesli kolejka jest pusta to agent przeszukal wszystko do czego mial dostep
             cout << "BFS: Agent" << this->id << " skonczyl swoja kolejke" << endl;
             return;
         }
 
-        int n = q.front();
+        // zdejmujey pierwszy element z kolejki jako obecny
+        int const n = q.front();
         q.pop();
         visited.insert(n);
         neighbours.clear();
@@ -57,9 +61,10 @@ public:
         }
 
         cout << "BFS: Agent" << this->id << " odwiedza pole " << n << endl;
+
         if (n == target) {
             cout << "BFS: Agent" << this->id << " odnalazl cel" << endl;
-            foundTargetBFS = true;
+            foundTargetBFS = true; // przerywamy algorytm, bo jeden z agentow znalazl cel
             return;
         }
 
@@ -69,17 +74,20 @@ public:
         }
     }
 
+    // pojedynczy krok algorytmu DFS dla jednego agenta
     void DFSstep() {
-        if (s.empty()) {
+        if (s.empty()) { // jesli stos jest pusty to agent przeszukal wszystko do czego mial dostep
             cout << "DFS: Agent " << this->id << " skonczyl swoj stos" << endl;
             return;
         }
 
-        int n = s.top();
+        // zdejmujemy ostatni element ze stosu jako obecny
+        int const n = s.top();
         s.pop();
         visited.insert(n);
 
         neighbours.clear();
+
         for (pair<int, int> p : graf) {
             if (n == p.first) neighbours.push_back(p.second);
         }
@@ -87,7 +95,7 @@ public:
         cout << "DFS: Agent" << this->id << " odwiedza pole " << n << endl;
         if (n == target) {
             cout << "DFS: Agent" << this->id << " odnalazl cel" << endl;
-            foundTargetDFS = true;
+            foundTargetDFS = true; // przerywamy algorytm bo znaleziono cel
             return;
         }
 
@@ -106,10 +114,11 @@ void multiAgentBFS(int const agentCount) {
         agents.push_back(Agent(i));
     }
 
+    // algorytm
     while (true) {
         bool found = false;
-        for (Agent& a : agents) {
-            if (!a.q.empty()) {
+        for (Agent& a : agents) { //referencje do wszystkich agentow
+            if (!a.q.empty()) { // nie ma po co sprawdzac pustej kolejki
                 a.BFSstep();
                 if (foundTargetBFS) {
                     cout << "Algorytm BFS zakonczyl dzialanie";
@@ -147,7 +156,7 @@ void multiAgentDFS(int const agentCount) {
     while (true) {
         bool found = false;
         for (Agent& a : agents) {
-            if (!a.s.empty()) {
+            if (!a.s.empty()) { // po co sprawdzac pusty stos
                 a.DFSstep();
                 if (foundTargetDFS) {
                     cout << "Algorytm DFS zakonczyl dzialanie";
@@ -176,9 +185,9 @@ void multiAgentDFS(int const agentCount) {
 }
 
 int main(int argc, char* argv[]) {
-    srand(time(0));
+    srand(time(0)); // bez tego zimenna 'losowa' bedzie zawsze taka sama
 
-    // sprawdzanie poprawnosci uruchomienia programu
+    // sprawdzenie czy program ma plik podany jako argument
     if (argc != 2) {
         cerr << "Uzycie: " << argv[0] << " <nazwa_pliku>" << endl;
         return 1;
@@ -187,15 +196,15 @@ int main(int argc, char* argv[]) {
     // odczyt z pliku
     ifstream plik(argv[1]);
 
-    // sprawdzanie czy plik sie otworzyl
+    // sprawdzanie czy plik istnieje (lub czy nie ma jakichs innych problemow)
     if (!plik.is_open()) {
         cerr << "Nie mozna otworzyc pliku" << endl;
         return 1;
     }
 
-    int x, y; // tymczasowe zmienne
-    while (plik >> x >> y) { // strumien wpisuje kolejne indeksy pol do x i y
-        graf.push_back({x, y}); // x i y dodane na stale do par
+    int sourceNode, targetNode;
+    while (plik >> sourceNode >> targetNode) { // strumien wpisuje kolejne indeksy pol do x i y
+        graf.push_back({sourceNode, targetNode}); // x i y dodane na stale do par
     }
 
     // wyswietlenie par z grafu
@@ -208,17 +217,17 @@ int main(int argc, char* argv[]) {
         if (uniqueChecker.insert(p.first).second) nodes.push_back(p.first); //.second zwraca wartosc boolean, w zaleznosci od tego czy instrukcja sie powiodla
         if (uniqueChecker.insert(p.second).second) nodes.push_back(p.second);
     }
-    clock_t start;
-    clock_t end;
 
-    start = clock();
+    //pomiar BFS
+    clock_t start = clock();
     multiAgentBFS(4);
-    end = clock();
-    double executionTimeBFS = double(end - start) / CLOCKS_PER_SEC;
+    clock_t end = clock();
+    double const executionTimeBFS = double(end - start) / CLOCKS_PER_SEC;
 
     visited.clear();
     cout << endl << endl;
 
+    //pomiar DFS
     start = clock();
     multiAgentDFS(3);
     end = clock();
@@ -228,6 +237,8 @@ int main(int argc, char* argv[]) {
 
     cout << "Czas wykonywania algorytmu BFS: " << executionTimeBFS << endl;
     cout << "Czas wykonywania algorytmu DFS: " << executionTimeDFS << endl;
+
+    //porownanie czasowe
     if (executionTimeBFS > executionTimeDFS) {
         cout << "Algorytm DFS znalazl cel szybciej o " << executionTimeBFS - executionTimeDFS << endl;
     } else {
