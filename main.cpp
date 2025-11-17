@@ -11,13 +11,12 @@ using namespace std;
 vector<pair<int, int>> graf; // graf w postaci jednostronnych przejsc miedzy polami
 set<int> uniqueChecker; // pomocnicza do vectora nodes, trzeba uzyc razem z wektorem, bo set nie jest indeksowany
 set<int> visited;
-vector<int> nodes; // wymaga uniqueChecker bo latwiej sprawdzic unikalnosc danych
+vector<int> nodes; // wymaga uniqueChecker, bo latwiej sprawdzic unikalnosc danych
 
 bool foundTargetBFS = false;
 bool foundTargetDFS = false;
 
-// TODO: target jako input uzytkownika zamiast stalej
-int target = 17;
+int target;
 
 bool checkIfInVector(const vector<int>& vec, int const value) {
     for (int const n : vec) {
@@ -196,7 +195,7 @@ int main(int argc, char* argv[]) {
     // odczyt z pliku
     ifstream plik(argv[1]);
 
-    // sprawdzanie czy plik istnieje (lub czy nie ma jakichs innych problemow)
+    // sprawdzanie, czy plik istnieje (lub czy nie ma jakichs innych problemow)
     if (!plik.is_open()) {
         cerr << "Nie mozna otworzyc pliku" << endl;
         return 1;
@@ -207,15 +206,37 @@ int main(int argc, char* argv[]) {
         graf.emplace_back(sourceNode, targetNode); // x i y dodane na stale do par
     }
 
-    // wyswietlenie par z grafu
-    for (pair<int, int> p : graf) {
-        cout << p.first << " " << p.second << endl;
-    }
-
     // tworzenie listy wszystkich miejsc grafu
     for (pair<int, int> p : graf) {
         if (uniqueChecker.insert(p.first).second) nodes.push_back(p.first); //.second zwraca wartosc boolean, w zaleznosci od tego czy instrukcja sie powiodla
         if (uniqueChecker.insert(p.second).second) nodes.push_back(p.second);
+    }
+
+    for (int x : nodes) {
+        cout << x << endl;
+    }
+
+    // user input
+    while (true) {
+        cout << "Podaj cel labiryntu: ";
+        int tmp;
+        cin >> tmp;
+        cout << tmp << endl;
+        bool exists = false;
+
+        for (int x : nodes) {
+            if (x == tmp) {
+                exists = true;
+                break;
+            }
+        }
+
+        if (exists) {
+            target = tmp;
+            break;
+        } else {
+            cout << "Niepoprawny cel, spróbuj ponownie" << endl;
+        }
     }
 
     //pomiar BFS
